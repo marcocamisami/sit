@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triad DMA | Gaming Solutions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0f0f0f;
+            --secondary: #00ff88;
+            --accent: #7700ff;
+            --text: #ffffff;
+            --text-secondary: #b0b0b0;
+            --card-bg: #1a1a1a;
+            --section-bg: #141414;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background Elements */
+        .bg-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .bg-element {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(119, 0, 255, 0.1);
+            filter: blur(60px);
+            animation: float 15s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0);
+            }
+            50% {
+                transform: translate(50px, 50px);
+            }
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+        
+        .logo-img {
+            height: 38px;
+            width: auto;
+            border-radius: 50%;
+            border: 2px solid var(--secondary);
+        }
+        
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.2rem;
+            align-items: center;
+        }
+        
+        .nav-item {
+            position: relative;
+        }
+        
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: var(--secondary);
+            background: rgba(0, 255, 136, 0.1);
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 0.8rem 0;
+            min-width: 220px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(15px);
+            transition: all 0.3s ease;
+            z-index: 100;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-item:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(5px);
+        }
+        
+        .dropdown-item {
+            display: block;
+            padding: 0.7rem 1.5rem;
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        
+        .dropdown-item:hover, .dropdown-item.active {
+            color: var(--secondary);
+            background: rgba(0, 255, 136, 0.05);
+        }
+        
+        .discord-btn {
+            background: linear-gradient(135deg, #5865F2, #404EED);
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .discord-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(88, 101, 242, 0.4);
+            background: linear-gradient(135deg, #6571f5, #4a56f0);
+        }
+        
+        /* Main Content */
+        main {
+            padding-top: 90px;
+            min-height: 100vh;
+        }
+        
+        .hero {
+            position: relative;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+        }
+        
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
+            opacity: 0.2;
+            z-index: -1;
+        }
+        
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            padding: 0 2rem;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.2rem;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.1;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2.2rem;
+            line-height: 1.6;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .section {
+            padding: 4.5rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .section-title-container {
+            text-align: center;
+            margin-bottom: 3.5rem;
+            position: relative;
+        }
+        
+        .section-title {
+            font-size: 2.3rem;
+            font-weight: 700;
+            display: inline-block;
+            position: relative;
+            padding-bottom: 12px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+            border-radius: 4px;
+        }
+        
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-top: 0.8rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* About Section */
+        .about-content {
+            background-color: var(--section-bg);
+            border-radius: 12px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            line-height: 1.7;
+        }
+        
+        .about-content h3 {
+            color: var(--secondary);
+            margin: 1.5rem 0 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .about-content p {
+            margin-bottom: 1.2rem;
+            color: var(--text-secondary);
+        }
+        
+        .about-content ul {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+        
+        .about-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Contact Section */
+        .contact-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            background-color: var(--section-bg);
+            border-radius: 12px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .contact-method {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-method:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .contact-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary);
+        }
+        
+        .contact-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+        
+        .contact-info {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .product-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 255, 136, 0.3);
+        }
+        
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--accent);
+            color: white;
+            padding: 0.3rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            z-index: 2;
+            box-shadow: 0 4px 15px rgba(119, 0, 255, 0.3);
+        }
+        
+        .product-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+            background: #0f0f0f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .product-image img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            transition: transform 0.6s ease;
+        }
+        
+        .product-card:hover .product-image img {
+            transform: scale(1.08);
+        }
+        
+        .product-info {
+            padding: 1.6rem;
+        }
+        
+        .product-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: var(--secondary);
+        }
+        
+        .product-desc {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+            min-height: 60px;
+        }
+        
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+        
+        .product-action {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+        
+        .product-action:hover {
+            background: var(--secondary);
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 255, 136, 0.2);
+        }
+        
+        /* Tutorials Section */
+        .tutorials-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--section-bg);
+            border-radius: 12px;
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tutorial-step {
+            margin-bottom: 2.2rem;
+            padding-bottom: 2.2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .tutorial-step:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .step-title {
+            font-size: 1.4rem;
+            color: var(--secondary);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .step-number {
+            background-color: var(--secondary);
+            color: var(--primary);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        
+        .step-content p {
+            margin-bottom: 1rem;
+        }
+        
+        .step-content img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 1.2rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Dropdown Menu System */
+        .dropdown-system {
+            background-color: var(--section-bg);
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .dropdown-header {
+            padding: 1.3rem 1.8rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            color: var(--text);
+        }
+        
+        .dropdown-header:hover {
+            background-color: rgba(0, 255, 136, 0.05);
+            color: var(--secondary);
+        }
+        
+        .dropdown-header i {
+            transition: transform 0.3s ease;
+            color: var(--text-secondary);
+        }
+        
+        .dropdown-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            padding: 0 1.8rem;
+        }
+        
+        .dropdown-item {
+            padding: 1.1rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .dropdown-system.active .dropdown-header {
+            background-color: rgba(0, 255, 136, 0.1);
+            color: var(--secondary);
+        }
+        
+        .dropdown-system.active .dropdown-header i {
+            transform: rotate(180deg);
+            color: var(--secondary);
+        }
+        
+        .dropdown-system.active .dropdown-content {
+            max-height: 2000px;
+            padding: 0 1.8rem 1.8rem;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #0a0a0a;
+            padding: 4.5rem 2rem 2.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2.5rem;
+        }
+        
+        .footer-col h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.6rem;
+            position: relative;
+            padding-bottom: 10px;
+            color: var(--text);
+        }
+        
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+        }
+        
+        .footer-col p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.8rem;
+            font-size: 0.95rem;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.9rem;
+        }
+        
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+        }
+        
+        .footer-links a:hover {
+            color: var(--secondary);
+            transform: translateX(5px);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1.2rem;
+            margin-top: 1.8rem;
+        }
+        
+        .social-link {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background-color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .social-link:hover {
+            background-color: var(--secondary);
+            color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 255, 136, 0.2);
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .hero-title {
+                font-size: 3rem;
+            }
+            
+            .section-title {
+                font-size: 2.1rem;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero {
+                height: 450px;
+            }
+            
+            .hero-title {
+                font-size: 2.7rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.3rem;
+            }
+            
+            .section-title {
+                font-size: 1.9rem;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .nav-container {
+                padding: 0.8rem 1.5rem;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .section {
+                padding: 3.5rem 1.5rem;
+            }
+            
+            .about-content,
+            .contact-container,
+            .tutorials-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background Elements -->
+    <div class="bg-elements">
+        <div class="bg-element" style="width: 300px; height: 300px; top: 10%; left: 5%; animation-delay: 0s;"></div>
+        <div class="bg-element" style="width: 400px; height: 400px; bottom: 15%; right: 10%; animation-delay: 2s;"></div>
+        <div class="bg-element" style="width: 250px; height: 250px; top: 50%; left: 30%; animation-delay: 4s;"></div>
+    </div>
+    
+    <!-- Header -->
+    <header>
+        <div class="nav-container">
+            <a href="#home" class="logo">
+                <img src="https://i.postimg.cc/JDdm1bVY/triad-logo.png" alt="Triad DMA Logo" class="logo-img">
+                <span class="logo-text">TRIAD DMA</span>
+            </a>
+            
+            <nav class="nav-links">
+                <div class="nav-item">
+                    <a href="#home" class="nav-link active"><i class="fas fa-home"></i> Home</a>
+                </div>
+                
+                <div class="nav-item">
+                    <a href="#" class="nav-link"><i class="fas fa-shopping-cart"></i> Shop <i class="fas fa-chevron-down"></i></a>
+                    <div class="dropdown-menu">
+                        <a href="#hardware" class="dropdown-item"><i class="fas fa-microchip"></i> Hardware</a>
+                        <a href="#software" class="dropdown-item"><i class="fas fa-gamepad"></i> Software</a>
+                        <a href="#firmware" class="dropdown-item"><i class="fas fa-code"></i> Firmware</a>
+                    </div>
+                </div>
+
+                <div class="nav-item">
+                    <a href="#tutorials" class="nav-link"><i class="fas fa-graduation-cap"></i> Tutorials</a>
+                </div>
+                
+                <div class="nav-item">
+                    <a href="#about" class="nav-link"><i class="fas fa-info-circle"></i> About</a>
+                </div>
+                
+                <div class="nav-item">
+                    <a href="#contact" class="nav-link"><i class="fas fa-envelope"></i> Contact</a>
+                </div>
+                
+                <div class="nav-item">
+                    <a href="https://discord.gg/tHT8GURm" target="_blank" class="discord-btn">
+                        <i class="fab fa-discord"></i> Discord
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+            <div class="hero-bg"></div>
+            <div class="hero-content">
+                <h1 class="hero-title">TRIAD GAMING SOLUTIONS</h1>
+                <p class="hero-subtitle">Premium hardware and software solutions for competitive gamers. Join thousands of satisfied customers worldwide.</p>
+                <a href="#products" class="discord-btn" style="margin: 0 auto;">
+                    <i class="fas fa-arrow-down"></i> Explore Products
+                </a>
+            </div>
+        </section>
+        
+        <!-- Hardware Section -->
+        <section class="section" id="hardware">
+            <div class="section-title-container">
+                <h2 class="section-title">HARDWARE</h2>
+                <p class="section-subtitle">High-performance hardware solutions for serious gamers</p>
+            </div>
+            
+            <div class="products-grid">
+                <!-- DMA Hardware Bundle -->
+                <div class="product-card">
+                    <div class="product-badge">BEST SELLER</div>
+                    <div class="product-image">
+                        <img src="https://dmacheese.com/wp-content/uploads/2024/06/hdmidmabundle.png" alt="DMA Hardware Bundle">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">DMA HARDWARE BUNDLE</h3>
+                        <p class="product-desc">DMA hardware bundle</p>
+                        <div class="product-meta">
+                            <a href="https://discord.gg/tHT8GURm" target="_blank" class="product-action">
+                                <i class="fab fa-discord"></i> Open Ticket to Purchase
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DMA Fuser -->
+                <div class="product-card">
+                    <div class="product-badge">NEW</div>
+                    <div class="product-image">
+                        <img src="https://dmacheese.com/wp-content/uploads/2024/06/DICHENFUSER-1.png" alt="DMA Fuser">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">DMA FUSER</h3>
+                        <p class="product-desc">DMA fuser (hdmi)</p>
+                        <div class="product-meta">
+                            <a href="https://discord.gg/tHT8GURm" target="_blank" class="product-action">
+                                <i class="fab fa-discord"></i> Open Ticket to Purchase
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DMA Card 75T -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://dmacheese.com/wp-content/uploads/2024/06/75ttt.png" alt="DMA Card 75T">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">DMA CARD 75T</h3>
+                        <p class="product-desc">DMA card 75T</p>
+                        <div class="product-meta">
+                            <a href="https://discord.gg/tHT8GURm" target="_blank" class="product-action">
+                                <i class="fab fa-discord"></i> Open Ticket to Purchase
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- KMbox Net -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://dmacheese.com/wp-content/uploads/2024/06/kmboxnet.png" alt="KMbox Net">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">KMBOX NET</h3>
+                        <p class="product-desc">KMbox net</p>
+                        <div class="product-meta">
+                            <a href="https://discord.gg/tHT8GURm" target="_blank" class="product-action">
+                                <i class="fab fa-discord"></i> Open Ticket to Purchase
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Software Section -->
+        <section class="section" id="software">
+            <div class="section-title-container">
+                <h2 class="section-title">SOFTWARE</h2>
+                <p class="section-subtitle">Advanced software solutions for competitive gaming</p>
+            </div>
+            
+            <div class="products-grid">
+                <!-- Black Ops 6 -->
+                <div class="product-card">
+                    <div class="product-badge">NEW</div>
+                    <div class="product-image">
+                        <img src="https://www.everyeye.it/immagini/call-of-duty-black-ops-6/#lg=1&slide=0" alt="Black Ops 6">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">BLACK OPS 6</h3>
+                        <p class="product-desc">triaddma cheet black ops 6</p>
+                        <div class="product-meta">
+                            <a href="https://discord.gg/tHT8GURm" target="_blank" class="product-action">
+                                <i class="fab fa-discord"></i> Open Ticket to Purchase
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Valorant -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://dmacheese.com/wp-content/uploads/2024/09/VAL.png" alt="Valorant">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">VALORANT</h3>
+                        <p class="product-desc">triaddma cheet valorant</p>
+                        <div class="product-meta">
+                            <a href="https://discord.gg/tHT8GURm" target="_blank" class="product-action">
+                                <i class="fab fa-discord"></i> Open Ticket to Purchase
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Fortnite -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://dmacheese.com/wp-content/uploads/2024/09/fntri.png" alt="Fortnite">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">FORTNITE</h3>
+                        <p class="product-desc">triaddma cheet fornite</p>
+                        <div class="product-meta">
+                            <a href="https://discord.gg/tHT8GURm" target="_blank" class="product-action">
+                                <i class="fab fa-discord"></i> Open Ticket to Purchase
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dead by Daylight -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://dmacheese.com/wp-content/uploads/2024/10/dbd.png" alt="Dead by Daylight">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">DEAD BY DAYLIGHT</h3>
+                        <p class="product-desc">triaddma cheet dead by daylight</p>
+                        <div class="product-meta">
+                            <a href="https://discord.gg/tHT8GURm" target="_blank" class="product-action">
+                                <i class="fab fa-discord"></i> Open Ticket to Purchase
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Apex Legends -->
+                <div class="product-card">
+                    <div class="product-badge">HOT</div>
+                    <div class="product-image">
+                        <img src="https://dmacheese.com/wp-content/uploads/2024/09/apex.png" alt="Apex Legends">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">APEX LEGENDS</h3>
+                        <p class="product-desc">triaddma cheet apex legends</p>
+                        <div class="product-meta">
+                            <a href="https://discord.gg/tHT8GURm" target="_blank" class="product-action">
+                                <i class="fab fa-discord"></i> Open Ticket to Purchase
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Firmware Section -->
+        <section class="section" id="firmware">
+            <div class="section-title-container">
+                <h2 class="section-title">FIRMWARE</h2>
+                <p class="section-subtitle">Advanced firmware solutions for bypassing anti-cheat systems</p>
+            </div>
+            
+            <div class="products-grid">
+                <!-- Emulated DMA Firmware EAC BE RICO -->
+                <div class="product-card">
+                    <div class="product-badge">NEW</div>
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1555774698-0b77e0d5fac6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Emulated DMA Firmware">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">EMULATED DMA FIRMWARE EAC BE RICO</h3>
+                        <p class="product-desc">Advanced firmware solution for bypassing anti-cheat systems with enhanced stability and performance.</p>
+                        <div class="product-meta">
+                            <a href="https://discord.gg/tHT8GURm" target="_blank" class="product-action">
+                                <i class="fab fa-discord"></i> Open Ticket to Purchase
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Emulated DMA Firmware EAC BE RICO VCK ACE -->
+                <div class="product-card">
+                    <div class="product-badge">PREMIUM</div>
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1985&q=80" alt="Emulated DMA Firmware">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">EMULATED DMA FIRMWARE EAC BE RICO VCK ACE</h3>
+                        <p class="product-desc">Premium firmware with additional features for maximum compatibility across all anti-cheat systems.</p>
+                        <div class="product-meta">
+                            <a href="https://discord.gg/tHT8GURm" target="_blank" class="product-action">
+                                <i class="fab fa-discord"></i> Open Ticket to Purchase
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- About Section -->
+        <section class="section" id="about">
+            <div class="section-title-container">
+                <h2 class="section-title">ABOUT US</h2>
+                <p class="section-subtitle">Learn more about Triad DMA and our mission</p>
+            </div>
+            
+            <div class="about-content">
+                <h3>Who We Are</h3>
+                <p>Triad DMA is a leading provider of high-performance gaming solutions, specializing in Direct Memory Access (DMA) technology. Our team consists of passionate gamers and skilled developers who understand the needs of competitive players.</p>
+                
+                <h3>Our Mission</h3>
+                <p>Our mission is to provide gamers with the most advanced and reliable hardware and software solutions to enhance their gaming experience while maintaining the highest standards of quality and performance.</p>
+                
+                <h3>Our Technology</h3>
+                <p>We specialize in DMA technology that allows for high-speed memory access with minimal detection risk. Our solutions are designed to work with the latest anti-cheat systems while providing stable and consistent performance.</p>
+                
+                <h3>Why Choose Us?</h3>
+                <ul>
+                    <li>Cutting-edge technology developed by experts</li>
+                    <li>Regular updates and improvements</li>
+                    <li>Excellent customer support</li>
+                    <li>Proven track record in the gaming community</li>
+                    <li>Commitment to quality and reliability</li>
+                </ul>
+                
+                <h3>Our Community</h3>
+                <p>We pride ourselves on our active and supportive community. Join thousands of satisfied customers who trust Triad DMA for their gaming needs.</p>
+            </div>
+        </section>
+        
+        <!-- Contact Section -->
+        <section class="section" id="contact">
+            <div class="section-title-container">
+                <h2 class="section-title">CONTACT US</h2>
+                <p class="section-subtitle">Get in touch with our support team</p>
+            </div>
+            
+            <div class="contact-container">
+                <div class="contact-method">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3 class="contact-title">Email Support</h3>
+                    <p class="contact-info">For general inquiries and support</p>
+                    <a href="mailto:support@triad.dma" class="product-action">
+                        <i class="fas fa-paper-plane"></i> support@triad.dma
+                    </a>
+                </div>
+                
+                <div class="contact-method">
+                    <div class="contact-icon">
+                        <i class="fab fa-discord"></i>
+                    </div>
+                    <h3 class="contact-title">Discord Server</h3>
+                    <p class="contact-info">Join our community for real-time support</p>
+                    <a href="https://discord.gg/tHT8GURm" target="_blank" class="product-action">
+                        <i class="fab fa-discord"></i> Join Our Discord
+                    </a>
+                </div>
+                
+                <div class="contact-method">
+                    <div class="contact-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <h3 class="contact-title">Support Tickets</h3>
+                    <p class="contact-info">Create a support ticket for personalized assistance</p>
+                    <a href="https://discord.gg/tHT8GURm" target="_blank" class="product-action">
+                        <i class="fas fa-ticket-alt"></i> Open Support Ticket
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Tutorials Section -->
+        <section class="section" id="tutorials">
+            <div class="section-title-container">
+                <h2 class="section-title">TUTORIALS</h2>
+                <p class="section-subtitle">Step-by-step guides to help you get the most out of your Triad DMA products</p>
+            </div>
+            
+            <div class="tutorials-container">
+                <div class="dropdown-system active">
+                    <div class="dropdown-header">
+                        <span>Getting Started with DMA Hardware</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content">
+                        <div class="tutorial-step">
+                            <h3 class="step-title"><span class="step-number">1</span> Unboxing and Setup</h3>
+                            <div class="step-content">
+                                <p>Welcome to your new DMA hardware! Follow these steps to get started:</p>
+                                <ol>
+                                    <li>Carefully unbox your DMA device and ensure all components are present</li>
+                                    <li>Connect the device to your computer using the provided USB cable</li>
+                                    <li>Install the necessary drivers from the included USB drive or download them from our website</li>
+                                    <li>Power on the device and wait for the status LED to turn green</li>
+                                </ol>
+                                <img src="https://dmacheese.com/wp-content/uploads/2024/06/hdmidmabundle.png" alt="DMA Hardware Setup">
+                            </div>
+                        </div>
+                        
+                        <div class="tutorial-step">
+                            <h3 class="step-title"><span class="step-number">2</span> Initial Configuration</h3>
+                            <div class="step-content">
+                                <p>After installation, you'll need to configure your DMA hardware:</p>
+                                <ol>
+                                    <li>Launch the configuration software</li>
+                                    <li>Select your device from the detected hardware list</li>
+                                    <li>Choose your preferred settings (memory mode, polling rate, etc.)</li>
+                                    <li>Save your configuration profile</li>
+                                    <li>Restart the device to apply changes</li>
+                                </ol>
+                                <img src="https://dmacheese.com/wp-content/uploads/2024/06/DICHENFUSER-1.png" alt="DMA Configuration">
+                            </div>
+                        </div>
+                        
+                        <div class="tutorial-step">
+                            <h3 class="step-title"><span class="step-number">3</span> Connecting to Target System</h3>
+                            <div class="step-content">
+                                <p>To connect your DMA device to the target system:</p>
+                                <ol>
+                                    <li>Power off the target system</li>
+                                    <li>Connect the DMA device to an available PCIe slot</li>
+                                    <li>Connect the auxiliary power cable if required</li>
+                                    <li>Power on the target system</li>
+                                    <li>Verify connection status in the software interface</li>
+                                </ol>
+                                <img src="https://dmacheese.com/wp-content/uploads/2024/06/75ttt.png" alt="DMA Connection">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dropdown-system">
+                    <div class="dropdown-header">
+                        <span>Software Installation and Setup</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content">
+                        <div class="tutorial-step">
+                            <h3 class="step-title"><span class="step-number">1</span> Downloading the Software</h3>
+                            <div class="step-content">
+                                <p>To download the Triad DMA software:</p>
+                                <ol>
+                                    <li>Visit our official website or Discord server</li>
+                                    <li>Navigate to the downloads section</li>
+                                    <li>Select the appropriate version for your system</li>
+                                    <li>Download the installer package</li>
+                                </ol>
+                                <img src="https://dmacheese.com/wp-content/uploads/2024/06/kmboxnet.png" alt="Software Download">
+                            </div>
+                        </div>
+                        
+                        <div class="tutorial-step">
+                            <h3 class="step-title"><span class="step-number">2</span> Installation Process</h3>
+                            <div class="step-content">
+                                <p>Follow these steps to install the software:</p>
+                                <ol>
+                                    <li>Run the installer as administrator</li>
+                                    <li>Follow the on-screen instructions</li>
+                                    <li>Enter your license key when prompted</li>
+                                    <li>Select your installation directory</li>
+                                    <li>Complete the installation and restart if required</li>
+                                </ol>
+                                <img src="https://www.everyeye.it/immagini/call-of-duty-black-ops-6/#lg=1&slide=0" alt="Software Installation">
+                            </div>
+                        </div>
+                        
+                        <div class="tutorial-step">
+                            <h3 class="step-title"><span class="step-number">3</span> Initial Configuration</h3>
+                            <div class="step-content">
+                                <p>Configure your software for optimal performance:</p>
+                                <ol>
+                                    <li>Launch the software</li>
+                                    <li>Select your game from the supported titles</li>
+                                    <li>Adjust settings according to your preferences</li>
+                                    <li>Save your configuration profile</li>
+                                    <li>Test the settings in-game and make adjustments as needed</li>
+                                </ol>
+                                <img src="https://dmacheese.com/wp-content/uploads/2024/09/VAL.png" alt="Software Configuration">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dropdown-system">
+                    <div class="dropdown-header">
+                        <span>Advanced Usage and Troubleshooting</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content">
+                        <div class="tutorial-step">
+                            <h3 class="step-title"><span class="step-number">1</span> Firmware Updates</h3>
+                            <div class="step-content">
+                                <p>Keeping your firmware updated is crucial:</p>
+                                <ol>
+                                    <li>Check for firmware updates regularly in the software interface</li>
+                                    <li>Download the latest firmware file from our website</li>
+                                    <li>Connect your device and put it in update mode</li>
+                                    <li>Select the firmware file and begin the update process</li>
+                                    <li>Do not disconnect the device during the update</li>
+                                </ol>
+                                <img src="https://dmacheese.com/wp-content/uploads/2024/09/apex.png" alt="Firmware Update">
+                            </div>
+                        </div>
+                        
+                        <div class="tutorial-step">
+                            <h3 class="step-title"><span class="step-number">2</span> Common Issues and Solutions</h3>
+                            <div class="step-content">
+                                <p>If you encounter issues, try these solutions:</p>
+                                <ul>
+                                    <li><strong>Device not detected:</strong> Reinstall drivers, try different USB port, check power connection</li>
+                                    <li><strong>Software crashes:</strong> Run as administrator, update graphics drivers, disable conflicting software</li>
+                                    <li><strong>Performance issues:</strong> Lower in-game settings, close background applications, allocate more RAM</li>
+                                    <li><strong>Connection drops:</strong> Check cables, update firmware, try different PCIe slot</li>
+                                </ul>
+                                <img src="https://dmacheese.com/wp-content/uploads/2024/09/fntri.png" alt="Troubleshooting">
+                            </div>
+                        </div>
+                        
+                        <div class="tutorial-step">
+                            <h3 class="step-title"><span class="step-number">3</span> Optimizing Performance</h3>
+                            <div class="step-content">
+                                <p>For the best performance:</p>
+                                <ol>
+                                    <li>Keep your system and drivers updated</li>
+                                    <li>Use high-quality USB cables for connections</li>
+                                    <li>Allocate sufficient system resources</li>
+                                    <li>Experiment with different polling rates</li>
+                                    <li>Monitor system temperatures during extended use</li>
+                                </ol>
+                                <img src="https://dmacheese.com/wp-content/uploads/2024/10/dbd.png" alt="Performance Optimization">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Additional Tutorials from dmacheese.com -->
+                <div class="dropdown-system">
+                    <div class="dropdown-header">
+                        <span>DMA Hardware Setup Guide</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content">
+                        <div class="tutorial-step">
+                            <h3 class="step-title"><span class="step-number">1</span> Physical Installation</h3>
+                            <div class="step-content">
+                                <p>Proper physical installation is crucial for DMA hardware:</p>
+                                <ol>
+                                    <li>Power down your target system completely</li>
+                                    <li>Open the computer case and locate an available PCIe slot</li>
+                                    <li>Carefully insert the DMA card into the slot, ensuring it's fully seated</li>
+                                    <li>Connect any required power cables to the device</li>
+                                    <li>Secure the card with the mounting screw if applicable</li>
+                                    <li>Close the computer case and power on the system</li>
+                                </ol>
+                                <img src="https://dmacheese.com/wp-content/uploads/2024/06/pcie-install.jpg" alt="PCIe Installation">
+                            </div>
+                        </div>
+                        
+                        <div class="tutorial-step">
+                            <h3 class="step-title"><span class="step-number">2</span> Driver Installation</h3>
+                            <div class="step-content">
+                                <p>Installing the correct drivers:</p>
+                                <ol>
+                                    <li>Download the latest drivers from our website</li>
+                                    <li>Run the installer as administrator</li>
+                                    <li>Follow the on-screen instructions</li>
+                                    <li>Restart your computer when prompted</li>
+                                    <li>Verify the device appears in Device Manager without errors</li>
+                                </ol>
+                                <p><strong>Note:</strong> Some systems may require disabling driver signature enforcement for proper installation.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dropdown-system">
+                    <div class="dropdown-header">
+                        <span>Software Configuration Guide</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content">
+                        <div class="tutorial-step">
+                            <h3 class="step-title"><span class="step-number">1</span> Initial Setup</h3>
+                            <div class="step-content">
+                                <p>Configuring the software for first use:</p>
+                                <ol>
+                                    <li>Launch the Triad DMA software</li>
+                                    <li>Select your hardware from the detected devices list</li>
+                                    <li>Choose your target game from the supported titles</li>
+                                    <li>Configure basic settings like polling rate and memory mode</li>
+                                    <li>Save your profile for future use</li>
+                                </ol>
+                                <img src="https://dmacheese.com/wp-content/uploads/2024/06/software-config.jpg" alt="Software Configuration">
+                            </div>
+                        </div>
+                        
+                        <div class="tutorial-step">
+                            <h3 class="step-title"><span class="step-number">2</span> Advanced Features</h3>
+                            <div class="step-content">
+                                <p>Exploring advanced software features:</p>
+                                <ul>
+                                    <li><strong>Memory Scanning:</strong> Configure custom memory scanning patterns</li>
+                                    <li><strong>Trigger Settings:</strong> Adjust activation conditions and timing</li>
+                                    <li><strong>Performance Modes:</strong> Switch between different performance profiles</li>
+                                    <li><strong>Custom Scripts:</strong> Load and manage custom Lua scripts</li>
+                                </ul>
+                                <p>Each feature includes detailed tooltips - hover over any setting for more information.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dropdown-system">
+                    <div class="dropdown-header">
+                        <span>Troubleshooting Common Issues</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content">
+                        <div class="tutorial-step">
+                            <h3 class="step-title"><span class="step-number">1</span> Device Not Detected</h3>
+                            <div class="step-content">
+                                <p>If your DMA device isn't being detected:</p>
+                                <ol>
+                                    <li>Check physical connections and reseat the device if necessary</li>
+                                    <li>Verify power supply to the device</li>
+                                    <li>Reinstall drivers</li>
+                                    <li>Try different USB ports (if applicable)</li>
+                                    <li>Test on another computer to isolate the issue</li>
+                                </ol>
+                                <p>If problems persist, contact our support team with details about your system configuration.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="tutorial-step">
+                            <h3 class="step-title"><span class="step-number">2</span> Performance Issues</h3>
+                            <div class="step-content">
+                                <p>For performance optimization:</p>
+                                <ul>
+                                    <li>Close unnecessary background applications</li>
+                                    <li>Update your graphics drivers</li>
+                                    <li>Adjust in-game settings to reduce load</li>
+                                    <li>Allocate more system resources to the DMA software</li>
+                                    <li>Try different polling rate settings</li>
+                                </ul>
+                                <p>Our Discord community often shares optimal settings for specific games - check the #configurations channel.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>Triad DMA</h3>
+                <p>Premium gaming solutions for competitive players. Join thousands of satisfied customers worldwide.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#home"><i class="fas fa-chevron-right"></i> Home</a></li>
+                    <li><a href="#hardware"><i class="fas fa-chevron-right"></i> Hardware</a></li>
+                    <li><a href="#software"><i class="fas fa-chevron-right"></i> Software</a></li>
+                    <li><a href="#firmware"><i class="fas fa-chevron-right"></i> Firmware</a></li>
+                    <li><a href="#tutorials"><i class="fas fa-chevron-right"></i> Tutorials</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Support</h3>
+                <ul class="footer-links">
+                    <li><a href="#contact"><i class="fas fa-chevron-right"></i> Contact Us</a></li>
+                    <li><a href="https://discord.gg/tHT8GURm" target="_blank"><i class="fas fa-chevron-right"></i> Discord Support</a></li>
+                    <li><a href="mailto:support@triad.dma"><i class="fas fa-chevron-right"></i> Email Support</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> FAQ</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>&copy; 2023 Triad DMA. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Dropdown system functionality
+        document.querySelectorAll('.dropdown-system').forEach(dropdown => {
+            const header = dropdown.querySelector('.dropdown-header');
+            header.addEventListener('click', () => {
+                dropdown.classList.toggle('active');
+            });
+        });
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    // Update active nav link
+                    document.querySelectorAll('.nav-link').forEach(link => {
+                        link.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Scroll to target
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Set active nav link based on scroll position
+        window.addEventListener('scroll', function() {
+            const scrollPosition = window.scrollY;
+            
+            document.querySelectorAll('section').forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionBottom = sectionTop + section.offsetHeight;
+                const sectionId = section.getAttribute('id');
+                
+                if(scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                    document.querySelectorAll('.nav-link').forEach(link => {
+                        link.classList.remove('active');
+                        if(link.getAttribute('href') === `#${sectionId}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        });
+        
+        // Create animated background elements
+        function createBgElements() {
+            const bgElements = document.querySelector('.bg-elements');
+            for (let i = 0; i < 5; i++) {
+                const element = document.createElement('div');
+                element.classList.add('bg-element');
+                const size = Math.random() * 200 + 100;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const delay = Math.random() * 5;
+                element.style.width = `${size}px`;
+                element.style.height = `${size}px`;
+                element.style.left = `${posX}%`;
+                element.style.top = `${posY}%`;
+                element.style.animationDelay = `${delay}s`;
+                element.style.opacity = Math.random() * 0.2 + 0.1;
+                bgElements.appendChild(element);
+            }
+        }
+        
+        // Initialize background elements
+        createBgElements();
+    </script>
+</body>
+</html>
